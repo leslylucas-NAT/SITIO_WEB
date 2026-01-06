@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natura - Mi Pedido Virtual</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <style>
+        /* --- ESTILOS GENERALES (SE MANTIENEN ÍNTEGROS) --- */
+        :root {
+            --primary: #FF6B00;
+            --dark: #1F2937;
+            --light: #F9F6F2;
+            --black-header: #000000;
+        }
+
+        body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--light); color: var(--dark); }
+
+        .black-header {
+            background-color: var(--black-header);
+            color: white;
+            padding: 15px 40px; 
+            display: flex;
+            align-items: center;
+            justify-content: space-between; 
+            position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-left-text { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; min-width: 200px; }
+        .site-title { font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; font-size: 1.3rem; line-height: 1.1; margin: 0; color: #fff; }
+        .consultora-id { font-size: 0.95rem; color: #ddd; font-weight: 400; margin-top: 4px; }
+
+        .header-center-nav { display: flex; align-items: center; justify-content: center; gap: 30px; flex-grow: 1; }
+        .nav-link { color: #eee; text-decoration: none; font-weight: 700; font-size: 0.9rem; text-transform: uppercase; transition: color 0.2s; display: flex; align-items: center; gap: 5px; letter-spacing: 1px; }
+        .nav-link:hover { color: var(--primary); }
+        .nav-link.active { color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 2px; }
+        .nav-link::after { content: "⌄"; font-size: 1.1rem; position: relative; top: -2px; }
+
+        .header-right-logos { display: flex; align-items: center; justify-content: flex-end; gap: 10px; min-width: 150px; }
+        .brand-logo { height: 28px; width: auto; object-fit: contain; }
+
+        .hero-section { width: 100%; background-color: #F5F0EB; padding-bottom: 20px; margin-bottom: 30px; }
+        .hero-image-container { width: 100%; max-width: 1400px; margin: 0 auto; }
+        .swiper.hero-swiper { width: 100%; height: auto; }
+        .swiper-slide { display: flex; justify-content: center; align-items: center; }
+        .swiper-img { display: block; width: 100%; height: 350px; object-fit: cover; object-position: top; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 40px 20px; }
+        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+
+        @media (max-width: 1100px) {
+            .grid { grid-template-columns: repeat(3, 1fr); }
+            .black-header { flex-direction: column; gap: 15px; padding: 15px; text-align: center; }
+            .header-center-nav { gap: 15px; width: 100%; justify-content: center; }
+        }
+
+        @media (max-width: 600px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
+
+        .card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; flex-direction: column; font-size: 0.95rem; transition: transform 0.2s; }
+        .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; }
+        .card-body { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; }
+        .card h3 { font-size: 0.95rem; margin: 0 0 5px 0; height: 2.4em; overflow: hidden; line-height: 1.2; }
+        .price { font-size: 1.1rem; font-weight: 700; color: var(--primary); margin: 8px 0; }
+        .btn-add { background-color: white; border: 1px solid var(--primary); color: var(--primary); padding: 8px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%; font-size: 0.9rem; margin-top: auto; transition: all 0.2s; }
+        .btn-add:hover { background-color: var(--primary); color: white; }
+
+        .floating-cart-btn { position: fixed; bottom: 30px; right: 30px; background-color: var(--primary); color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; box-shadow: 0 4px 15px rgba(255, 107, 0, 0.4); cursor: pointer; z-index: 90; border: none; }
+        .cart-badge { position: absolute; top: 0; right: 0; background: red; color: white; font-size: 0.7rem; font-weight: bold; width: 20px; height: 20px; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
+
+        .cart-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 199; display: none; }
+        .cart-sidebar { position: fixed; top: 0; right: 0; width: 400px; max-width: 90%; height: 100vh; background: white; z-index: 200; transform: translateX(100%); transition: transform 0.3s; display: flex; flex-direction: column; }
+        .cart-sidebar.open { transform: translateX(0); }
+        .cart-header, .cart-footer { padding: 20px; background: #fafafa; border-bottom: 1px solid #eee; }
+        .cart-items-container { padding: 20px; flex-grow: 1; overflow-y: auto; }
+        .cart-item { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .qty-controls { display: flex; align-items: center; gap: 8px; margin-top: 8px; background-color: #f4f4f4; width: fit-content; padding: 4px; border-radius: 20px; }
+        .btn-qty { background: white; border: 1px solid #ddd; width: 24px; height: 24px; border-radius: 50%; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1rem; }
+        .qty-number { font-weight: 600; min-width: 18px; text-align: center; font-size: 0.9rem; }
+
+        #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 4px; padding: 12px; position: fixed; z-index: 300; left: 50%; bottom: 30px; transform: translateX(-50%); }
+        #toast.show { visibility: visible; animation: fadein 0.5s; }
+        .form-group { margin-bottom: 10px; } .form-input { width: 100%; padding: 10px; box-sizing: border-box; }
+        .btn-checkout { background-color: #25D366; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <header class="black-header">
+        <div class="header-left-text">
+            <h1 class="site-title">MI PEDIDO VIRTUAL</h1>
+            <div class="consultora-id">Consultora ID: {{ consultora_id }}</div>
+        </div>
+        <nav class="header-center-nav">
+            <a href="/tienda/natura/{{ consultora_id }}" class="nav-link {% if marca_actual == 'natura' %}active{% endif %}">NATURA</a>
+            <a href="/tienda/avon/{{ consultora_id }}" class="nav-link {% if marca_actual == 'avon' %}active{% endif %}">AVON</a>
+            <a href="/tienda/casa-estilo/{{ consultora_id }}" class="nav-link {% if marca_actual == 'casa-estilo' %}active{% endif %}">CASA & ESTILO</a>
+        </nav>
+        <div class="header-right-logos">
+            <img src="{{ url_for('static', filename='natura.png') }}" alt="Natura" class="brand-logo">
+            <img src="{{ url_for('static', filename='avon.png') }}" alt="Avon" class="brand-logo">
+        </div>
+    </header>
+
+    <section class="hero-section">
+        <div class="hero-image-container">
+            <div class="swiper hero-swiper">
+                <div class="swiper-wrapper">
+                    {% if marca_actual == 'avon' %}
+                        <div class="swiper-slide"><img src="{{ url_for('static', filename='C18 - AVON Anew Solar_V01_pieza1.jpg') }}" class="swiper-img"></div>
+                        <div class="swiper-slide"><img src="{{ url_for('static', filename='C18 - AVON LovU Together_Banner_V01.jpg') }}" class="swiper-img"></div>
+                    {% elif marca_actual == 'casa-estilo' %}
+                        <div class="swiper-slide"><img src="{{ url_for('static', filename='C18 - C&E  colección nochebuenas_Banner_V02.jpg') }}" class="swiper-img"></div>
+                        <div class="swiper-slide"><img src="{{ url_for('static', filename='C18 - C&E taza, tarro y sandwicheras V2.jpg') }}" class="swiper-img"></div>
+                    {% else %}
+                        <div class="swiper-slide"><img src="{{ url_for('static', filename='pieza1.jpg') }}" class="swiper-img"></div>
+                        <div class="swiper-slide"><img src="{{ url_for('static', filename='pieza2.jpg') }}" class="swiper-img"></div>
+                    {% endif %}
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+    </section>
+
+    <div id="toast">Producto agregado</div>
+    <div class="cart-overlay" id="overlay" onclick="toggleCart()"></div>
+    <button class="floating-cart-btn" onclick="toggleCart()">
+        🛒 <span class="cart-badge" id="cart-count">0</span>
+    </button>
+
+    <main class="container">
+        <input type="text" id="search" placeholder="Buscar..." onkeyup="filterProducts()" 
+               style="width: 100%; max-width: 500px; display: block; margin: 0 auto 30px auto; padding: 12px; border-radius: 20px; border: 1px solid #ddd; outline: none;">
+
+        <div class="grid" id="product-grid">
+            {% for prod in products %}
+            <div class="card product-card" data-name="{{ prod.descripcion | lower }}">
+                <img src="{{ prod.imagen_url }}" onerror="this.src='https://via.placeholder.com/300?text=Sin+Imagen'">
+                <div class="card-body">
+                    <h3 title="{{ prod.descripcion }}">{{ prod.descripcion }}</h3>
+                    <small style="color: #888;">{{ prod.sku }}</small>
+                    <div class="price">
+                        {% if prod.precio %} ${{ "{:,.2f}".format(prod.precio) }} {% else %} ??? {% endif %}
+                    </div>
+                    <button class="btn-add" onclick='addToCart({{ prod | tojson }})'>Agregar +</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <div class="cart-sidebar" id="sidebar">
+        <div class="cart-header">
+            <h3 style="margin:0">Tu Pedido</h3>
+            <button onclick="toggleCart()" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+        </div>
+        <div class="cart-items-container" id="cart-items"></div>
+        <div class="cart-footer" id="cart-footer" style="display:none;">
+            <div style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 15px;">
+                <span>Total:</span> <span id="cart-total">$0.00</span>
+            </div>
+            <form onsubmit="submitOrder(event)">
+                <div class="form-group"><label>Nombre</label><input class="form-input" type="text" id="nombre" required></div>
+                <div class="form-group"><label>WhatsApp</label><input class="form-input" type="tel" id="telefono" required pattern="[0-9]{10}"></div>
+                <button type="submit" class="btn-checkout" id="btn-submit">Confirmar Pedido</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <script>
+        const swiper = new Swiper('.hero-swiper', {
+            loop: true,
+            autoplay: { delay: 3500, disableOnInteraction: false },
+            speed: 800,
+            pagination: { el: '.swiper-pagination', clickable: true },
+        });
+
+        const CONSULTORA_ID = "{{ consultora_id }}";
+        const API_URL = "http://127.0.0.1:5000"; 
+        let cart = JSON.parse(localStorage.getItem('natura_cart')) || [];
+        updateCartUI();
+
+        function addToCart(p) {
+            let item = cart.find(i => i.sku === p.sku);
+            if(item) { item.cantidad++; } 
+            else { cart.push({...p, cantidad:1, precio: p.precio||0, imagen: p.imagen_url}); }
+            saveCart(); updateCartUI(); showToast("Agregado");
+        }
+
+        function changeQty(sku, change) {
+            let item = cart.find(i => i.sku === sku);
+            if (!item) return;
+            item.cantidad += change;
+            if (item.cantidad <= 0) { removeFromCart(sku); return; }
+            saveCart(); updateCartUI();
+        }
+
+        function removeFromCart(sku) { 
+            cart = cart.filter(i => i.sku !== sku); 
+            saveCart(); updateCartUI(); 
+        }
+
+        function saveCart() { localStorage.setItem('natura_cart', JSON.stringify(cart)); }
+
+        function updateCartUI() {
+            const list = document.getElementById("cart-items");
+            const footer = document.getElementById("cart-footer");
+            document.getElementById("cart-count").innerText = cart.reduce((a,b)=>a+b.cantidad,0);
+            if(cart.length===0) { 
+                list.innerHTML='<p style="text-align:center;color:#888;margin-top:50px;">Tu carrito está vacío</p>'; 
+                footer.style.display="none"; return; 
+            }
+            footer.style.display="block"; list.innerHTML=""; let total=0;
+            cart.forEach(i => {
+                total += i.precio*i.cantidad;
+                list.innerHTML += `
+                <div class="cart-item">
+                    <div style="flex-grow:1; padding-right:10px;">
+                        <b style="font-size:0.9rem; display:block;">${i.descripcion}</b>
+                        <div style="font-size:0.8rem; color:#666;">$${i.precio.toLocaleString()} c/u</div>
+                        <div class="qty-controls">
+                            <button class="btn-qty" onclick="changeQty('${i.sku}', -1)">-</button>
+                            <span class="qty-number">${i.cantidad}</span>
+                            <button class="btn-qty" onclick="changeQty('${i.sku}', 1)">+</button>
+                        </div>
+                    </div>
+                    <div style="text-align:right; min-width:85px; display:flex; flex-direction:column; justify-content:space-between;">
+                        <b style="font-size:1rem; white-space:nowrap;">$${(i.precio*i.cantidad).toLocaleString()}</b>
+                        <span class="btn-remove" onclick="removeFromCart('${i.sku}')" style="font-size:0.75rem; color:red; cursor:pointer;">Eliminar</span>
+                    </div>
+                </div>`;
+            });
+            document.getElementById("cart-total").innerText = "$"+total.toLocaleString('en-US', {minimumFractionDigits: 2});
+        }
+
+        async function submitOrder(e) {
+            e.preventDefault();
+            const btn=document.getElementById("btn-submit"); 
+            btn.innerText="Procesando pedido..."; btn.disabled=true;
+            try {
+                const res = await fetch(`${API_URL}/orders`, {
+                    method:"POST", 
+                    headers:{"Content-Type":"application/json"}, 
+                    body:JSON.stringify({
+                        consultora_id: CONSULTORA_ID, 
+                        carrito: cart, 
+                        cliente: {nombre:document.getElementById("nombre").value, telefono:document.getElementById("telefono").value}
+                    })
+                });
+                if(res.ok) { 
+                    alert("✅ ¡Pedido recibido con éxito por la consultora!"); 
+                    localStorage.removeItem('natura_cart'); cart=[]; updateCartUI(); toggleCart();
+                } else { alert("Error al procesar el pedido."); }
+            } catch(e) { alert("Error de conexión"); }
+            finally { btn.disabled=false; btn.innerText="Confirmar Pedido"; }
+        }
+
+        function toggleCart() { 
+            document.getElementById("sidebar").classList.toggle("open"); 
+            document.getElementById("overlay").style.display = document.getElementById("sidebar").classList.contains("open") ? "block" : "none"; 
+        }
+
+        function filterProducts() { 
+            const term = document.getElementById("search").value.toLowerCase(); 
+            document.querySelectorAll(".product-card").forEach(c => c.style.display = c.getAttribute("data-name").includes(term) ? "flex" : "none"); 
+        }
+        function showToast(m) { const t=document.getElementById("toast"); t.innerText=m; t.className="show"; setTimeout(()=>t.className="", 2000); }
+    </script>
+</body>
+</html>
