@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+flask
+pydantic[email]
+email-validator
+requests
+pandas
+openpyxl
+python-multipart
+urllib3
