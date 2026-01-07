@@ -7,4 +7,5 @@ requests
 pandas
 openpyxl
 python-multipart
+gunicorn
 urllib3
