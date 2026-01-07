@@ -12,7 +12,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 app = Flask(__name__)
 
 # --- CONFIGURACIÓN ---
-FASTAPI_URL = "http://127.0.0.1:8000" 
+FASTAPI_URL = "https://sitio-web-loks.onrender.com" 
 BASE_DIR = Path(__file__).resolve().parent
 
 # --- CONFIGURACIÓN GREEN API (Tus credenciales actuales) ---
@@ -102,4 +102,5 @@ def crear_pedido():
         return jsonify({"detail": "Error de comunicación con el servidor central"}), 500
 
 if __name__ == "__main__":
+
     app.run(debug=True, port=5000)
