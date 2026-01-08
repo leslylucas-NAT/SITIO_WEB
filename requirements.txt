@@ -9,3 +9,12 @@ openpyxl
 python-multipart
 gunicorn
 urllib3
+fastapi
+uvicorn
+pandas
+jinja2
+python-dotenv
+requests
+openpyxl
+pydantic[email]
+
