@@ -26,7 +26,7 @@ PRODUCTS_FILE = DATA_DIR / "productos.csv"
 CONSULTORAS_FILE = DATA_DIR / "consultoras.csv"
 
 # URL base del frontend
-FRONT_BASE_URL = "http://127.0.0.1:8000/front/front.html"
+FRONT_BASE_URL = "https://sitio-web-1-t74a.onrender.com"
 
 # ---------- SendGrid (correo) ----------
 SENDGRID_API_KEY = "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"
@@ -262,4 +262,5 @@ def crear_pedido(pedido: PedidoCreate):
         "status": "ok",
         "message": "Pedido procesado y notificado",
         "whatsapp_automatico": whatsapp_enviado
+
     }
