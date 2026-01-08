@@ -179,7 +179,7 @@
         });
 
         const CONSULTORA_ID = "{{ consultora_id }}";
-        const API_URL = "http://127.0.0.1:5000"; 
+        const API_URL = "https://sitio-web-1-t74a.onrender.com"; 
         let cart = JSON.parse(localStorage.getItem('natura_cart')) || [];
         updateCartUI();
 
@@ -270,4 +270,5 @@
         function showToast(m) { const t=document.getElementById("toast"); t.innerText=m; t.className="show"; setTimeout(()=>t.className="", 2000); }
     </script>
 </body>
+
 </html>
